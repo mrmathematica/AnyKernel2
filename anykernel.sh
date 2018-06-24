@@ -3,7 +3,7 @@
 
 ## AnyKernel setup
 # begin properties
-properties() {
+properties() { '
 kernel.string=AKT profiles friendly Kernel by MrMathematica
 do.devicecheck=1
 do.modules=0
@@ -14,7 +14,7 @@ device.name2=gemini
 device.name3=MI5
 device.name4=Mi5
 device.name5=mi5
-} # end properties
+'; } # end properties
 
 # shell variables
 block=/dev/block/bootdevice/by-name/boot;

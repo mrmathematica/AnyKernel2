@@ -275,7 +275,7 @@ flash_boot() {
     esac;
     savedpath="$LD_LIBRARY_PATH";
     unset LD_LIBRARY_PATH;
-    if [ "$(/system/bin/dalvikvm -Xbootclasspath:/system/framework/core-oj.jar:/system/framework/core-libart.jar:/system/framework/conscrypt.jar:/system/framework/bouncycastle.jar -Xnodex2oat -Xnoimage-dex2oat -cp $bin/BootSignature_Android.jar com.android.verity.BootSignature -verify boot.img | grep VALID)" ]; then
+    if [ "$(/system/bin/dalvikvm -Xbootclasspath:/system/framework/core-oj.jar:/system/framework/core-libart.jar:/system/framework/conscrypt.jar:/system/framework/bouncycastle.jar -Xnodex2oat -Xnoimage-dex2oat -cp $bin/BootSignature_Android.jar com.android.verity.BootSignature -verify boot.img 2>&1 | grep VALID)" ]; then
       /system/bin/dalvikvm -Xbootclasspath:/system/framework/core-oj.jar:/system/framework/core-libart.jar:/system/framework/conscrypt.jar:/system/framework/bouncycastle.jar -Xnodex2oat -Xnoimage-dex2oat -cp $bin/BootSignature_Android.jar com.android.verity.BootSignature /$avbtype boot-new.img $pk8 $cert boot-new-signed.img;
       if [ $? != 0 ]; then
         ui_print " "; ui_print "Signing image failed. Aborting..."; exit 1;
@@ -332,7 +332,8 @@ flash_boot() {
     fi;
   done;
   if [ "$dtbo" ]; then
-    dtbo_block=/dev/block/bootdevice/by-name/dtbo$slot;
+    dtbo_block=`find /dev/block -iname dtbo$slot | head -n 1` 2>/dev/null;
+    [ ! -z $dtbo_block ] && dtbo_block=`readlink -f $dtbo_block`
     if [ ! -e "$(echo $dtbo_block)" ]; then
       ui_print " "; ui_print "dtbo partition could not be found. Aborting..."; exit 1;
     fi;
